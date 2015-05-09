@@ -3,100 +3,121 @@ chats wrapper application for VK
 
 API: client <–> server
 
-GET /tags
+**POST /register**
 
 parameters:
-token
-chat_id
-[message_id=-1] – id последнего прочитанного сообщения.
+* vk_token
 
 response:
+```json
 {
-   “tags”:  [
-       {
-           “tag_id”: <tag_id>,
-           “name”: <tag_name>,
-           “mark”: <tag_mark>,
-       },
-       ...
-       ] ,
-    “status": {
-        "code”: <status_code>,
-        “message”: <message>
+    "token": "<token>",
+    "status": {
+        "code": "<status_code>",
+	"message": "<message>"
     }
 }
+```
+
+**GET /tags**
+
+parameters:
+* token
+* chat_id
+* [message_id=-1] – id последнего прочитанного сообщения.
+
+response:  
+```json
+{  
+   "tags":  [  
+       {  
+           "tag_id": "<tag_id>",  
+           "name": "<tag_name>",  
+           "mark": "<tag_mark>",  
+       },  
+       ...  
+    ] ,  
+    "status": {  
+        "code": "<status_code>",  
+        "message": "<message>"
+    }    
+}  
+```
 
 tags – отсортированные по убыванию частоты
 
-GET /messages (получить сообщения)
+**GET /messages (получить сообщения)**
 
 parameters:
-token
-chat_id
-tag_ids – тэги через запятую
+* token
+* chat_id
+* tag_ids – тэги через запятую
 
 response:
+```json
 {
-  “messages”: [
-      {
-          “message_id”: <message_id>,
-           “tag_id”: <tag_id>,
-           “name”: <tag_name>
-      },  
-	“status": {
-		"code”: <status_code>,
-		“message”: <message>
-	}
-   ]
+    "messages": [
+        {
+            "message_id": "<message_id>",
+            "tag_id": "<tag_id>",
+            "name": "<tag_name>"
+        },  
+        ...
+    ],
+    "status": {
+        "code": "<status_code>",
+	"message": "<message>"
+    }
  }
+```
 
-
-PUT /tags/<tag_id> (изменение статуса тэга)
-
-parameters:
-token
-tag_id
-mark [enum: unknown, interesting, flood]
-
-response:
-{
-	“status": {
-		"code”: <status_code>,
-		“message”: <message>
-	}
-}
-
-   4. POST /tags (создание тэга)
+**PUT /tags/<tag_id> (изменение статуса тэга)**
 
 parameters:
-token
-tag_name
-[mark=interesting] – interesting/flood.
+* token
+* tag_id
+* mark [enum: unknown, interesting, flood]
 
 response:
+```json
 {
-	“tag_id”: <tag_id>,
-	“status": {
-		"code”: <status_code>,
-		“message”: <message>
-	}
+    "status": {
+        "code": "<status_code>",
+	"message": "<message>"
+    }
 }
+```
 
-
-   5. DELETE /tags/<tag_id>  (удаление тэга)
+**POST /tags (создание тэга)**
 
 parameters:
-token
-tag_id
+* token
+* tag_name
+* [mark=interesting] – interesting/flood.
 
 response:
+```json
 {
-	“status": {
-		"code”: <status_code>,
-		“message”: <message>
-	}
+    "tag_id": "<tag_id>",
+    "status": {
+        "code": "<status_code>",
+	"message": "<message>"
+    }
 }
+```
 
+**DELETE /tags/<tag_id>  (удаление тэга)**
 
+parameters:
+* token
+* tag_id
 
-
+response:
+```json
+{
+    "status": {
+        "code": "<status_code>",
+	"message": "<message>"
+    }
+}
+```
