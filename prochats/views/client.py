@@ -7,7 +7,6 @@ from .rendering import to_json, get_renderer
 from .validators import (
     accept,
     param_string,
-    param_client,
     param_float,
     param_int,
     param_sdk_token,
@@ -75,6 +74,6 @@ def add_tag(application, tag_name, new_mark):
     param_sdk_token(),
     param_int('tag_id', forward='tag_id')
 )
-def edit_tag(application, tag_id):
+def delete_tag(application, tag_id):
     # Удалить тег
     pass

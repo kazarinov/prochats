@@ -3,7 +3,7 @@
 from flask import render_template, request
 from .. import app
 from . import client
-from rengine.utils import es_api
+#from rengine.utils import es_api
 
 
 @app.route("/")
