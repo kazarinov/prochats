@@ -16,57 +16,65 @@ from .validators import (
 
 renderer = get_renderer()
 
-
-@app.route("/client/initiate", methods=["POST"])
+@app.route("/register", methods=["POST"])
 @to_json
-@accept(param_sdk_token(),
-        param_string('client_id'),
-        param_string('device.device_id', forward='device_id'),
-        param_string('device.platform', forward='device_platform'),
-        param_string('device.type', forward='device_type'),
-        param_string('device.version', forward='device_vesion'))
-def initiate_client(application, client_id, device_id, device_platform, device_type, device_vesion):
-    client = Client.query.filter_by(client_id=client_id).first()
-    if not client:
-        client = Client(client_id=client_id)
-        db.session.add(client)
-        db.session.commit()
+@accept(
+    param_string('vk_token')
+)
+def register(vk_id):
+    # Добавить в БД, вернуть токен клиента и статус
+    pass
 
-    client_device = ClientDevice(
-        device_id=device_id,
-        client_id=client.id,
-        platform=device_platform,
-        type=device_type,
-        version=device_vesion
-    )
-    db.session.add(client_device)
-    db.session.commit()
-    return renderer.client_info(client)
-
-
-@app.route("/client/location", methods=["POST"])
+@app.route("/tags", methods=["GET"])
 @to_json
-@accept(param_sdk_token(),
-        param_client(methods=['json']),
-        param_float('location.latitude', methods=['json'], forward='latitude'),
-        param_float('location.longitude', methods=['json'], forward='longitude'),
-        param_int('timestamp', methods=['json']))
-def update_location(application, client, latitude, longitude, timestamp):
-    client_location = ClientLocation(
-        client_id=client.id,
-        latitude=latitude,
-        longitude=longitude,
-        create_date=datetime.datetime.fromtimestamp(timestamp)
-    )
-    db.session.add(client_location)
-    db.session.commit()
-    return renderer.status('ok')
+@accept(
+    param_sdk_token(),
+    param_int('chat_id', forward='chat_id'),
+    param_int('message_id', required=None, forward='last_message_id')
+)
+def get_tags(application, chat_id, last_message_id):
+    # Вернуть теги
+    pass
 
-
-@app.route("/client/advertisements")
+@app.route("/messages", methods=["GET"])
 @to_json
-@accept(param_sdk_token(), param_client(methods=['get']))
-def get_client_advertisements(application, client):
-    client_tags = client.tags
-    advertisements = [] # TODO: get ads
-    return renderer.advertisements(advertisements)
+@accept(
+    param_sdk_token(),
+    param_int('chat_id', forward='chat_id'),
+    param_string('tag_ids', forward='tags_source')
+)
+def get_messages(application, chat_id, tags_source):
+    # Вернуть сообщения по тегам
+    pass
+
+@app.route("/tags/", methods=["PUT"])
+@to_json
+@accept(
+    param_sdk_token(),
+    param_int('tag_id', forward='tag_id'),
+    param_string('mark', forward='new_mark')
+)
+def edit_tag(application, tag_id, new_mark):
+    # Изменить статус тега на new_mark
+    pass
+
+@app.route("/tags/", methods=["POST"])
+@to_json
+@accept(
+    param_sdk_token(),
+    param_string('tag_name', forward='tag_name'),
+    param_string('mark', default='interesting', forward='new_mark')
+)
+def add_tag(application, tag_name, new_mark):
+    # Добавить тег с заданным статусом
+    pass
+
+@app.route("/tags/", methods=["DELETE"])
+@to_json
+@accept(
+    param_sdk_token(),
+    param_int('tag_id', forward='tag_id')
+)
+def edit_tag(application, tag_id):
+    # Удалить тег
+    pass
