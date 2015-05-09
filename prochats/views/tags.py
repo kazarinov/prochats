@@ -16,10 +16,12 @@ from .validators import (
     param_string,
     param_int,
     param_sdk_token,
+    param_id,
 )
 
 
 renderer = get_renderer()
+
 
 @app.route("/register", methods=["POST"])
 @to_json
@@ -160,6 +162,7 @@ def edit_tag(user, tag_id, new_mark):
     else:
         return renderer.error("Client error", 404, "Tag not found")
 
+
 @app.route("/tags/", methods=["POST"])
 @to_json
 @accept(
@@ -183,17 +186,9 @@ def add_tag(user, tag_name, chat_id, new_mark):
 @to_json
 @accept(
     param_sdk_token(),
-    param_int('tag_id', forward='tag_id')
+    param_id('tag_id', forward='tag', entity=Tag)
 )
-def delete_tag(user, tag_id):
-    tag = Tag.query.filter_by(tag_id=tag_id).first()
-    if tag:
-        try:
-            tag.query.delete()
-            db.session.commit()
-        except Exception as e:
-            return renderer.error("Server error", 500, e.message)
-        else:
-            return renderer.status()
-    else:
-        return renderer.error("Client error", 404, "Tag not found")
+def delete_tag(user, tag):
+    tag.query.delete()
+    db.session.commit()
+    return renderer.status()
