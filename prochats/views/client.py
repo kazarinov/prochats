@@ -3,7 +3,6 @@ import datetime
 
 from .. import db, app
 from ..models.users import User
-from ..models.tags import Tag
 from .rendering import to_json, get_renderer
 from .validators import (
     accept,
@@ -15,7 +14,6 @@ from .validators import (
 import hashlib, random, sys, datetime
 import vk
 import copy
-
 
 renderer = get_renderer()
 
@@ -35,6 +33,34 @@ def register(vk_id):
         return renderer.error("Server error", 500, e.message)
     else:
         return renderer.client_info(new_user)
+
+
+def get_vk_messages(vk_token, chat_id, timestamp=None):
+    vk_api = vk.API(access_token=vk_token, timeout=5)
+
+    chunk = 200
+    result_messages = []
+
+    while True:
+        history = vk_api.messages.getHistory(chat_id=chat_id, count=chunk)
+
+        for item in history.get('items'):
+            if (timestamp is not None and item.get('date') < timestamp) \
+                    or item.get('read_state') == 1 and timestamp is None:
+                break
+
+            result_messages.append({
+                'body': item.get('body'),
+                'message_id': item.get('id'),
+                'date': item.get('date'),
+                'read_state': item.get('read_state'),
+            })
+
+        if history.get('count') < chunk:
+            break
+
+    return result_messages
+
 
 @app.route("/update", methods=["POST"])
 @to_json
@@ -70,12 +96,42 @@ def delete(user):
 @to_json
 @accept(
     param_sdk_token(),
-    param_int('chat_id', forward='chat_id'),
-    param_int('message_id', required=None, forward='last_message_id')
+    param_int('chat_id'),
+    param_int('timestamp', required=None)
 )
-def get_tags(user, chat_id, last_message_id):
-    # Вернуть теги
-    pass
+def get_tags(user, chat_id, timestamp):
+    # получить пачку сообщений для генерации тегов
+    messages = get_vk_messages(user.vk_token, chat_id, timestamp)
+    tags = {}
+
+    for message in messages:
+        for word in message.split():
+            tags[word].append(word)
+
+    return tags
+
+
+def get_tags_(token, chat_id):
+    messages = get_vk_messages(token, chat_id, 1421194251)
+    tags = {}
+
+    for message in messages:
+        for word in message['body'].split():
+            if len(word) > 3:
+                tag_messages = tags.setdefault(normalize_word(word), [])
+                tag_messages.append(message.get('message_id'))
+
+    def compare(a, b):
+        if len(tags[a]) > len(tags[b]):
+            return 1
+        if len(tags[a]) < len(tags[b]):
+            return -1
+        else:
+            return 0
+
+    sorted_dict = sorted(tags, cmp=compare, reverse=True)
+
+    return sorted_dict[:20]
 
 @app.route("/messages", methods=["GET"])
 @to_json
@@ -84,7 +140,7 @@ def get_tags(user, chat_id, last_message_id):
     param_int('chat_id', forward='chat_id'),
     param_string('tag_ids', forward='tags_source')
 )
-def get_messages(user, chat_id, tags_source):
+def get_messages(application, chat_id, tags_source):
     # Вернуть сообщения по тегам
     pass
 
@@ -113,7 +169,6 @@ def edit_tag(user, tag_id, new_mark):
 @accept(
     param_sdk_token(),
     param_string('tag_name', forward='tag_name'),
-    param_int('chat_id', forward='chat_id'),
     param_string('mark', default='interesting', forward='new_mark')
 )
 def add_tag(user, tag_name, chat_id, new_mark):
@@ -125,7 +180,6 @@ def add_tag(user, tag_name, chat_id, new_mark):
         return renderer.error("Server error", 500, e.message)
     else:
         return renderer.new_tag(new_tag)
-
 
 @app.route("/tags/", methods=["DELETE"])
 @to_json
