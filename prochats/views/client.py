@@ -4,6 +4,7 @@ import random
 import sys
 
 import vk
+from ..utils.nlp_utils import normalize_word
 from .. import db, app
 from ..models.users import User
 from .rendering import to_json, get_renderer
@@ -67,11 +68,41 @@ def get_vk_messages(vk_token, chat_id, timestamp=None):
     param_int('timestamp', required=None)
 )
 def get_tags(user, chat_id, timestamp):
-    # получить пачку непрочитанных сообщений
-    messages = get_vk_messages(user.vk_token, chat_id)
+    # получить пачку сообщений для генерации тегов
+    messages = get_vk_messages(user.vk_token, chat_id, timestamp)
+    tags = {}
 
-    # TODO: aggregate tags
-    pass
+    for message in messages:
+        for word in message.split():
+            tags[word].append(word)
+
+    return tags
+
+
+def get_tags_(token, chat_id):
+    messages = get_vk_messages(token, chat_id, 1421194251)
+    tags = {}
+
+    for message in messages:
+        for word in message['body'].split():
+            if len(word) > 3:
+                tag_messages = tags.setdefault(normalize_word(word), [])
+                tag_messages.append(message.get('message_id'))
+
+    def compare(a, b):
+        if len(tags[a]) > len(tags[b]):
+            return 1
+        if len(tags[a]) < len(tags[b]):
+            return -1
+        else:
+            return 0
+
+    sorted_dict = sorted(tags, cmp=compare, reverse=True)
+
+    for tag in sorted_dict:
+        print tag, tags[tag]
+
+    return tags
 
 @app.route("/messages", methods=["GET"])
 @to_json
