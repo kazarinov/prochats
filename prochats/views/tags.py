@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-
 import hashlib
 import random
 import sys
 import datetime
 
+import vk
+
 from .. import db, app
+from ..utils.nlp import normalize_word
 from ..models.users import User
 from ..models.tags import Tag
 from .rendering import to_json, get_renderer
@@ -15,7 +17,6 @@ from .validators import (
     param_int,
     param_sdk_token,
 )
-import vk
 
 
 renderer = get_renderer()
@@ -29,13 +30,8 @@ def register(vk_id):
     # Генерируем токен уникального приложения
     sdk_token = hashlib.sha256(str(random.randint(0, sys.maxint)))
     new_user = User(vk_token=vk_id, sdk_token=sdk_token)
-    try:
-        db.session.add(new_user)
-        db.session.commit()
-    except Exception as e:
-        return renderer.error("Server error", 500, e.message)
-    else:
-        return renderer.client_info(new_user)
+    db.session.add(new_user)
+    db.session.commit()
 
 
 def get_vk_messages(vk_token, chat_id, timestamp=None):
@@ -80,6 +76,7 @@ def update(user, new_vk_id):
     else:
         return renderer.client_info(user)
 
+
 # Служебная функция: только для тестирования!
 @app.route("/delete", methods=["POST"])
 @to_json
@@ -95,6 +92,7 @@ def delete(user):
     else:
         return renderer.status()
 
+
 @app.route("/tags", methods=["GET"])
 @to_json
 @accept(
@@ -104,6 +102,7 @@ def delete(user):
 )
 def get_tags(user, chat_id, timestamp):
     # получить пачку сообщений для генерации тегов
+    limit = 20
     messages = get_vk_messages(user.vk_token, chat_id, timestamp)
     tags = {}
 
@@ -122,12 +121,12 @@ def get_tags(user, chat_id, timestamp):
             return 0
 
     sorted_dict = sorted(tags, cmp=compare, reverse=True)
-    for key in sorted_dict:
+    for key in tags:
         t = Tag(user_id=user.user_id, chat_id=chat_id, name=key, mark='unknown', create_date=datetime.datetime.now())
         db.session.add(t)
     db.session.commit()
+    return sorted_dict[:limit]
 
-    return sorted_dict[:20]
 
 @app.route("/messages", methods=["GET"])
 @to_json
@@ -136,9 +135,10 @@ def get_tags(user, chat_id, timestamp):
     param_int('chat_id', forward='chat_id'),
     param_string('tag_ids', forward='tags_source')
 )
-def get_messages(application, chat_id, tags_source):
+def get_messages(user, chat_id, tags_source):
     # Вернуть сообщения по тегам
     pass
+
 
 @app.route("/tags/", methods=["PUT"])
 @to_json
@@ -177,6 +177,7 @@ def add_tag(user, tag_name, chat_id, new_mark):
         return renderer.error("Server error", 500, e.message)
     else:
         return renderer.new_tag(new_tag)
+
 
 @app.route("/tags/", methods=["DELETE"])
 @to_json
