@@ -2,5 +2,6 @@ Flask
 Flask-SQLAlchemy
 requests
 flask-restful
-#MySQL-python
+MySQL-python
+vk==1.5
 nltk
