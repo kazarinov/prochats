@@ -84,6 +84,16 @@ class Renderer(object):
         }
 
     @staticmethod
+    def new_tag(tag):
+        return {
+            'tag_id': tag.tag_id,
+            'status': {
+                'code': "0"
+            },
+            'message': 'Success!'
+        }
+
+    @staticmethod
     def _advertisement(advertisement):
         return {
             'id': advertisement.advertisement_id,

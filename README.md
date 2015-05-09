@@ -19,12 +19,29 @@ response:
 }
 ```
 
+**POST /update**
+
+parameters:
+* sdk_token
+* vk_token
+
+response:
+```json
+{
+    "token": "<token>",
+    "status": {
+        "code": "<status_code>",
+	"message": "<message>"
+    }
+}
+```
+
 **GET /tags**
 
 parameters:
 * token
 * chat_id
-* [message_id=-1] – id последнего прочитанного сообщения.
+* timestamp – промежуток времени последнего запроса
 
 response:  
 ```json
@@ -93,6 +110,7 @@ response:
 parameters:
 * token
 * tag_name
+* chat_id
 * [mark=interesting] – interesting/flood.
 
 response:
