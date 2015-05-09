@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+
+import hashlib
+import random
+import sys
 import datetime
 
 from .. import db, app
@@ -8,13 +12,11 @@ from .rendering import to_json, get_renderer
 from .validators import (
     accept,
     param_string,
-    param_float,
     param_int,
     param_sdk_token,
 )
-import hashlib, random, sys, datetime
 import vk
-import copy
+
 
 renderer = get_renderer()
 
@@ -120,6 +122,10 @@ def get_tags(user, chat_id, timestamp):
             return 0
 
     sorted_dict = sorted(tags, cmp=compare, reverse=True)
+    for key in sorted_dict:
+        t = Tag(user_id=user.user_id, chat_id=chat_id, name=key, mark='unknown', create_date=datetime.datetime.now())
+        db.session.add(t)
+    db.session.commit()
 
     return sorted_dict[:20]
 
