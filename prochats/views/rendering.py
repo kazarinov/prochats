@@ -74,12 +74,13 @@ class Renderer(object):
 
 
     @staticmethod
-    def client_info(client):
+    def client_info(user):
         return {
-            'status': 'ok',
-            'client': {
-                'id': client.id
-            }
+            'token': user.sdk_token,
+            'status': {
+                'code': "0"
+            },
+            'message': 'Success!'
         }
 
     @staticmethod
