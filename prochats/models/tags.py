@@ -8,8 +8,9 @@ from .users import User
 
 class Tag(db.Model):
     __tablename__ = 'tags'
+    sqlite_autoincrement = True
 
-    tag_id = db.Column(db.BigInteger, autoincrement=True, primary_key=True)
+    tag_id = db.Column(db.BigInteger, autoincrement=True, primary_key=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     chat_id = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(255), nullable=False)

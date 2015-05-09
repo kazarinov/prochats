@@ -19,6 +19,7 @@ class HTTPTest(object):
             data = json.dumps(data)
 
         if method == 'GET':
+            print full_url
             response = self.app.get(full_url, headers=headers)
         elif method == 'PUT':
             response = self.app.put(full_url, headers=headers, data=data)

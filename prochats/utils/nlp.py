@@ -5,4 +5,8 @@ pymorph = pymorphy2.MorphAnalyzer()
 
 
 def normalize_word(word):
-    return pymorph.parse(word).normal_form
+    tags = pymorph.parse(word)
+    if tags:
+        return tags[0].normal_form
+    else:
+        return word

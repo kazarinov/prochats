@@ -102,8 +102,8 @@ def get_tags(user, chat_id, timestamp):
     tags = {}
 
     for message in messages:
-        message = re.sub('[.,:!]$', '', message.lstrip(string.punctuation))
-        for word in message['body'].split():
+        body = re.sub('[.,:!]$', '', message['body'].lstrip(string.punctuation))
+        for word in body.split():
             if len(word) > 3:
                 tag_messages = tags.setdefault(normalize_word(word), [])
                 tag_messages.append(message.get('message_id'))
@@ -117,7 +117,8 @@ def get_tags(user, chat_id, timestamp):
             return 0
 
     sorted_dict = sorted(tags, cmp=compare, reverse=True)
-    for key in tags:
+    tags = []
+    for key in sorted_dict[:limit]:
         tag = Tag(
             user_id=user.user_id,
             chat_id=chat_id,
@@ -125,9 +126,10 @@ def get_tags(user, chat_id, timestamp):
             mark='unknown',
             create_date=datetime.datetime.now(),
         )
+        tags.append(tag)
         db.session.add(tag)
     db.session.commit()
-    return sorted_dict[:limit]
+    return renderer.tags(tags)
 
 
 @app.route("/messages", methods=["GET"])

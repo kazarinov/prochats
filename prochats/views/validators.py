@@ -29,7 +29,7 @@ def get_param(name, params=None, methods=None):
         'get': request.args,
         'post': request.form,
         'headers': request.headers,
-        'json': request.get_json(force=True, silent=True) or {}
+        # 'json': request.get_json(force=True, silent=True) or {}
     }
 
     if methods is None:
@@ -46,7 +46,6 @@ def get_param(name, params=None, methods=None):
                     return None
             return source
         else:
-            print source
             if source.get(name) is not None:
                 return source.get(name)
 

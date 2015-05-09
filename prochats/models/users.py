@@ -8,7 +8,7 @@ from .. import db
 class User(db.Model):
     __tablename__ = 'users'
 
-    user_id = db.Column(db.Integer, nullable=False, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
     vk_token = db.Column(db.String(255), nullable=False)
     sdk_token = db.Column(db.String(255), nullable=False)
     create_date = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
