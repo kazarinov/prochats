@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 class ApiError(Exception):
     def __init__(self, message):
         super(ApiError, self).__init__(message)
