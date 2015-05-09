@@ -11,10 +11,10 @@ parameters:
 response:
 ```json
 {
-    "token": <token>,
+    "token": "<token>",
     "status": {
-        "code": <status_code>,
-	"message": <message>
+        "code": "<status_code>",
+	"message": "<message>"
     }
 }
 ```
@@ -31,15 +31,15 @@ response:
 {  
    "tags":  [  
        {  
-           "tag_id": <tag_id>,  
-           "name": <tag_name>,  
-           "mark": <tag_mark>,  
+           "tag_id": "<tag_id>",  
+           "name": "<tag_name>",  
+           "mark": "<tag_mark>",  
        },  
        ...  
     ] ,  
     "status": {  
-        "code": <status_code>,  
-        "message": <message>  
+        "code": "<status_code>",  
+        "message": "<message>"
     }    
 }  
 ```
@@ -58,15 +58,15 @@ response:
 {
     "messages": [
         {
-            "message_id": <message_id>,
-            "tag_id": <tag_id>,
-            "name": <tag_name>
+            "message_id": "<message_id>",
+            "tag_id": "<tag_id>",
+            "name": "<tag_name>"
         },  
         ...
     ],
     "status": {
-        "code": <status_code>,
-	"message": <message>
+        "code": "<status_code>",
+	"message": "<message>"
     }
  }
 ```
@@ -82,8 +82,8 @@ response:
 ```json
 {
     "status": {
-        "code": <status_code>,
-	"message": <message>
+        "code": "<status_code>",
+	"message": "<message>"
     }
 }
 ```
@@ -98,10 +98,10 @@ parameters:
 response:
 ```json
 {
-    "tag_id": <tag_id>,
+    "tag_id": "<tag_id>",
     "status": {
-        "code": <status_code>,
-	"message": <message>
+        "code": "<status_code>",
+	"message": "<message>"
     }
 }
 ```
@@ -116,8 +116,8 @@ response:
 ```json
 {
     "status": {
-        "code": <status_code>,
-	"message": <message>
+        "code": "<status_code>",
+	"message": "<message>"
     }
 }
 ```
