@@ -3,8 +3,7 @@ from functools import wraps
 
 from flask import request
 from .errors import MissingArgument, InvalidArgument, EmptyArgument, TokenError
-from ..models.client import Client
-from ..models.apps import Application
+from ..models.users import User
 
 
 def accept(*validators):
@@ -92,7 +91,7 @@ def param_bool(name, default=None, methods=None, forward=None):
     return validator
 
 
-def param_string(name, required=True, not_empty=False, methods=None, forward=None):
+def param_string(name, required=True, not_empty=False, default=None, methods=None, forward=None):
     def validator(params):
         param_raw = get_param(name, params, methods)
         if forward:
@@ -103,7 +102,7 @@ def param_string(name, required=True, not_empty=False, methods=None, forward=Non
         if param_raw is None and required:
             raise MissingArgument(name)
         elif param_raw is None and not required:
-            params[var_name] = None
+            params[var_name] = default
             return params
 
         try:
@@ -121,7 +120,7 @@ def param_string(name, required=True, not_empty=False, methods=None, forward=Non
     return validator
 
 
-def param_num(name, type_func, required=True, methods=None, min_value=None, forward=None):
+def param_num(name, type_func, required=True, default=None, methods=None, min_value=None, forward=None):
     def validator(params):
         if forward:
             var_name = forward
@@ -133,7 +132,7 @@ def param_num(name, type_func, required=True, methods=None, min_value=None, forw
         if param_raw is None and required:
             raise MissingArgument(name)
         elif param_raw is None and not required:
-            params[var_name] = None
+            params[var_name] = default
             return params
         else:
             try:
@@ -149,12 +148,12 @@ def param_num(name, type_func, required=True, methods=None, min_value=None, forw
     return validator
 
 
-def param_int(name, required=True, methods=None, min_value=None, forward=None):
-    return param_num(name, int, required, methods, min_value, forward)
+def param_int(name, required=True, default=None, methods=None, min_value=None, forward=None):
+    return param_num(name, int, required, default, methods, min_value, forward)
 
 
-def param_float(name, required=True, methods=None, min_value=None, forward=None):
-    return param_num(name, float, required, methods, min_value, forward)
+def param_float(name, required=True, default=None, methods=None, min_value=None, forward=None):
+    return param_num(name, float, required, default, methods, min_value, forward)
 
 
 def param_file(name, required=True):
@@ -202,14 +201,14 @@ def param_id(name, forward, entity, required=True, methods=None):
     return validator
 
 
-def param_enum(name, choice, required=True, methods=None):
+def param_enum(name, choice, required=True, default=None, methods=None):
     def validator(params):
         param_raw = get_param(name, params, methods)
 
         if param_raw is None and required:
             raise MissingArgument(name)
         elif param_raw is None and not required:
-            params[name] = None
+            params[name] = default
             return params
         else:
             if param_raw not in choice:
@@ -228,29 +227,7 @@ def propagate(*args):
     return validator
 
 
-def param_client(name='client_id', forward='client', methods=None):
-    if not methods:
-        methods = ['args', 'post', 'json']
-
-    def validator(params):
-        client_id = get_param(name, params, methods)
-
-        if client_id is None:
-            raise MissingArgument(name)
-
-        client = Client.query.filter_by(client_id=client_id).first()
-        if client is None:
-            raise InvalidArgument(name, client_id, 'There is no client with such client_id')
-        else:
-            params[forward] = client
-            if params and 'args' in methods and name in params.keys():
-                params.pop(name)
-
-        return params
-    return validator
-
-
-def param_sdk_token(name='Authentication', forward='application', methods=None):
+def param_sdk_token(name='Authentication', forward='user', methods=None):
     if not methods:
         methods = ['headers']
 
@@ -260,11 +237,11 @@ def param_sdk_token(name='Authentication', forward='application', methods=None):
         if token is None:
             raise MissingArgument(name)
 
-        application = Application.query.filter_by(sdk_token=token).first()
-        if application is None:
+        user = User.query.filter_by(sdk_token=token).first()
+        if user is None:
             raise TokenError(token)
         else:
-            params[forward] = application
+            params[forward] = user
             if params and 'args' in methods and name in params.keys():
                 params.pop(name)
 
