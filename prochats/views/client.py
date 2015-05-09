@@ -3,6 +3,7 @@ import datetime
 
 from .. import db, app
 from ..models.users import User
+from ..models.tags import Tag
 from .rendering import to_json, get_renderer
 from .validators import (
     accept,
@@ -169,6 +170,7 @@ def edit_tag(user, tag_id, new_mark):
 @accept(
     param_sdk_token(),
     param_string('tag_name', forward='tag_name'),
+    param_int('chat_id', forward='chat_id'),
     param_string('mark', default='interesting', forward='new_mark')
 )
 def add_tag(user, tag_name, chat_id, new_mark):
