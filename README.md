@@ -9,6 +9,7 @@ parameters:
 * vk_token
 
 response:
+```json
 {
 	“status": {
 		"code”: <status_code>,
@@ -25,6 +26,7 @@ parameters:
 * [message_id=-1] – id последнего прочитанного сообщения.
 
 response:  
+```json
 {  
    “tags”:  [  
        {  
@@ -50,6 +52,7 @@ parameters:
 * tag_ids – тэги через запятую
 
 response:
+```json
 {
   “messages”: [
       {
@@ -63,7 +66,7 @@ response:
 	}
    ]
  }
-
+```
 
 **PUT /tags/<tag_id> (изменение статуса тэга)**
 
@@ -73,12 +76,14 @@ parameters:
 * mark [enum: unknown, interesting, flood]
 
 response:
+```json
 {
 	“status": {
 		"code”: <status_code>,
 		“message”: <message>
 	}
 }
+```
 
 **POST /tags (создание тэга)**
 
@@ -88,6 +93,7 @@ parameters:
 * [mark=interesting] – interesting/flood.
 
 response:
+```json
 {
 	“tag_id”: <tag_id>,
 	“status": {
@@ -95,7 +101,7 @@ response:
 		“message”: <message>
 	}
 }
-
+```
 
 **DELETE /tags/<tag_id>  (удаление тэга)**
 
@@ -104,9 +110,11 @@ parameters:
 * tag_id
 
 response:
+```json
 {
 	“status": {
 		"code”: <status_code>,
 		“message”: <message>
 	}
 }
+```
