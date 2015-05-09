@@ -2,7 +2,7 @@
 import datetime
 
 from .. import db, app
-from ..models.client import ClientLocation, Client, ClientDevice
+from ..models.users import User
 from .rendering import to_json, get_renderer
 from .validators import (
     accept,
@@ -11,6 +11,7 @@ from .validators import (
     param_int,
     param_sdk_token,
 )
+import hashlib, random, sys, datetime
 
 
 renderer = get_renderer()
@@ -18,11 +19,16 @@ renderer = get_renderer()
 @app.route("/register", methods=["POST"])
 @to_json
 @accept(
-    param_string('vk_token')
+    param_string('vk_token', forward='vk_id')
 )
 def register(vk_id):
-    # Добавить в БД, вернуть токен клиента и статус
-    pass
+    # Генерируем токен уникального приложения
+    sdk_token = hashlib.md5(str(random.randint(0, sys.maxint)))
+    while (User.query.filter_by(sdk_token=sdk_token).first()):
+        sdk_token = hashlib.md5(str(random.randint(0, sys.maxint)))
+    new_user = User(vk_token=vk_id, sdk_token=sdk_token)
+    db.session.add(new_user)
+    db.session.commit()
 
 @app.route("/tags", methods=["GET"])
 @to_json
