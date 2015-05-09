@@ -73,17 +73,6 @@ def get_tags(user, chat_id, timestamp):
     tags = {}
 
     for message in messages:
-        for word in message.split():
-            tags[word].append(word)
-
-    return tags
-
-
-def get_tags_(token, chat_id):
-    messages = get_vk_messages(token, chat_id, 1421194251)
-    tags = {}
-
-    for message in messages:
         for word in message['body'].split():
             if len(word) > 3:
                 tag_messages = tags.setdefault(normalize_word(word), [])
