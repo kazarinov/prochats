@@ -11,12 +11,13 @@ parameters:
 response:
 ```json
 {
-	“status": {
-		"code”: <status_code>,
-		“message”: <message>
-	},
-	“token”: <token>,
+    "token": <token>,
+    "status": {
+        "code": <status_code>,
+	"message": <message>
+    }
 }
+```
 
 **GET /tags**
 
@@ -28,19 +29,20 @@ parameters:
 response:  
 ```json
 {  
-   “tags”:  [  
+   "tags":  [  
        {  
-           “tag_id”: <tag_id>,  
-           “name”: <tag_name>,  
-           “mark”: <tag_mark>,  
+           "tag_id": <tag_id>,  
+           "name": <tag_name>,  
+           "mark": <tag_mark>,  
        },  
        ...  
-       ] ,  
-    “status": {  
-        "code”: <status_code>,  
-        “message”: <message>  
+    ] ,  
+    "status": {  
+        "code": <status_code>,  
+        "message": <message>  
     }    
 }  
+```
 
 tags – отсортированные по убыванию частоты
 
@@ -54,17 +56,18 @@ parameters:
 response:
 ```json
 {
-  “messages”: [
-      {
-          “message_id”: <message_id>,
-           “tag_id”: <tag_id>,
-           “name”: <tag_name>
-      },  
-	“status": {
-		"code”: <status_code>,
-		“message”: <message>
-	}
-   ]
+    "messages": [
+        {
+            "message_id": <message_id>,
+            "tag_id": <tag_id>,
+            "name": <tag_name>
+        },  
+        ...
+    ],
+    "status": {
+        "code": <status_code>,
+	"message": <message>
+    }
  }
 ```
 
@@ -78,10 +81,10 @@ parameters:
 response:
 ```json
 {
-	“status": {
-		"code”: <status_code>,
-		“message”: <message>
-	}
+    "status": {
+        "code": <status_code>,
+	"message": <message>
+    }
 }
 ```
 
@@ -95,11 +98,11 @@ parameters:
 response:
 ```json
 {
-	“tag_id”: <tag_id>,
-	“status": {
-		"code”: <status_code>,
-		“message”: <message>
-	}
+    "tag_id": <tag_id>,
+    "status": {
+        "code": <status_code>,
+	"message": <message>
+    }
 }
 ```
 
@@ -112,9 +115,9 @@ parameters:
 response:
 ```json
 {
-	“status": {
-		"code”: <status_code>,
-		“message”: <message>
-	}
+    "status": {
+        "code": <status_code>,
+	"message": <message>
+    }
 }
 ```
