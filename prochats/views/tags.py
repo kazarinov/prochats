@@ -3,9 +3,10 @@ import hashlib
 import random
 import sys
 import datetime
+import re
+import string
 
 import vk
-
 from .. import db, app
 from ..utils.nlp import normalize_word
 from ..models.users import User
@@ -109,6 +110,7 @@ def get_tags(user, chat_id, timestamp):
     tags = {}
 
     for message in messages:
+        message = re.sub('[.,:!]$', '', message.lstrip(string.punctuation))
         for word in message['body'].split():
             if len(word) > 3:
                 tag_messages = tags.setdefault(normalize_word(word), [])
