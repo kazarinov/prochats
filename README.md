@@ -3,37 +3,51 @@ chats wrapper application for VK
 
 API: client <–> server
 
-GET /tags
+**POST /register**
 
 parameters:
-token
-chat_id
-[message_id=-1] – id последнего прочитанного сообщения.
+* vk_token
 
 response:
 {
-   “tags”:  [
-       {
-           “tag_id”: <tag_id>,
-           “name”: <tag_name>,
-           “mark”: <tag_mark>,
-       },
-       ...
-       ] ,
-    “status": {
-        "code”: <status_code>,
-        “message”: <message>
-    }
+	“status": {
+		"code”: <status_code>,
+		“message”: <message>
+	},
+	“token”: <token>,
 }
+
+**GET /tags**
+
+parameters:
+* token
+* chat_id
+* [message_id=-1] – id последнего прочитанного сообщения.
+
+response:  
+{  
+   “tags”:  [  
+       {  
+           “tag_id”: <tag_id>,  
+           “name”: <tag_name>,  
+           “mark”: <tag_mark>,  
+       },  
+       ...  
+       ] ,  
+    “status": {  
+        "code”: <status_code>,  
+        “message”: <message>  
+    }    
+}  
 
 tags – отсортированные по убыванию частоты
 
-GET /messages (получить сообщения)
+**GET /messages (получить сообщения)**
 
 parameters:
-token
-chat_id
-tag_ids – тэги через запятую
+* token
+* chat_id
+* tag_ids – тэги через запятую
 
 response:
 {
@@ -51,12 +65,12 @@ response:
  }
 
 
-PUT /tags/<tag_id> (изменение статуса тэга)
+**PUT /tags/<tag_id> (изменение статуса тэга)**
 
 parameters:
-token
-tag_id
-mark [enum: unknown, interesting, flood]
+* token
+* tag_id
+* mark [enum: unknown, interesting, flood]
 
 response:
 {
@@ -66,12 +80,12 @@ response:
 	}
 }
 
-   4. POST /tags (создание тэга)
+**POST /tags (создание тэга)**
 
 parameters:
-token
-tag_name
-[mark=interesting] – interesting/flood.
+* token
+* tag_name
+* [mark=interesting] – interesting/flood.
 
 response:
 {
@@ -83,11 +97,11 @@ response:
 }
 
 
-   5. DELETE /tags/<tag_id>  (удаление тэга)
+**DELETE /tags/<tag_id>  (удаление тэга)**
 
 parameters:
-token
-tag_id
+* token
+* tag_id
 
 response:
 {
@@ -96,7 +110,3 @@ response:
 		“message”: <message>
 	}
 }
-
-
-
-
