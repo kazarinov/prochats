@@ -4,4 +4,5 @@ requests
 flask-restful
 MySQL-python
 vk==1.5
-nltk
+pymorphy2[fast]
+pymorphy2-dicts-ru

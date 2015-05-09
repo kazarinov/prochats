@@ -3,7 +3,7 @@ import json
 import urllib
 import pytest
 
-from rengine import app as test_app
+from prochats import app as test_app
 
 
 class HTTPTest(object):

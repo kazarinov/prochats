@@ -127,6 +127,7 @@ class RemoteConfig(Config):
 
     SQLALCHEMY_DATABASE_URI = 'mysql://' + DB_USER + ':' + DB_PASSWORD + '@' + DB_HOST + '/' + DB_NAME + '?charset=utf8'
 
+
 class DevRemoteConfig(RemoteConfig):
     DEBUG = True
 
@@ -134,4 +135,4 @@ class DevRemoteConfig(RemoteConfig):
         super(DevRemoteConfig, self).__init__()
 
 
-config = DevRemoteConfig()
+config = LocalConfig()

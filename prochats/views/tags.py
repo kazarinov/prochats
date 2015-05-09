@@ -72,12 +72,8 @@ def get_vk_messages(vk_token, chat_id, timestamp=None):
 )
 def update(user, new_vk_id):
     user.vk_id = new_vk_id
-    try:
-        db.session.commit()
-    except Exception as e:
-        return renderer.error("Server error", 500, e.message)
-    else:
-        return renderer.client_info(user)
+    db.session.commit()
+    return renderer.client_info(user)
 
 
 # Служебная функция: только для тестирования!
@@ -87,13 +83,9 @@ def update(user, new_vk_id):
     param_sdk_token(),
 )
 def delete(user):
-    try:
-        user.query.delete()
-        db.session.commit()
-    except Exception as e:
-        return renderer.error("Server error", 500, e.message)
-    else:
-        return renderer.status()
+    user.query.delete()
+    db.session.commit()
+    return renderer.status()
 
 
 @app.route("/tags", methods=["GET"])
@@ -101,7 +93,7 @@ def delete(user):
 @accept(
     param_sdk_token(),
     param_int('chat_id'),
-    param_int('timestamp', required=None)
+    param_int('timestamp', required=None),
 )
 def get_tags(user, chat_id, timestamp):
     # получить пачку сообщений для генерации тегов
@@ -126,8 +118,14 @@ def get_tags(user, chat_id, timestamp):
 
     sorted_dict = sorted(tags, cmp=compare, reverse=True)
     for key in tags:
-        t = Tag(user_id=user.user_id, chat_id=chat_id, name=key, mark='unknown', create_date=datetime.datetime.now())
-        db.session.add(t)
+        tag = Tag(
+            user_id=user.user_id,
+            chat_id=chat_id,
+            name=key,
+            mark='unknown',
+            create_date=datetime.datetime.now(),
+        )
+        db.session.add(tag)
     db.session.commit()
     return sorted_dict[:limit]
 
@@ -144,47 +142,40 @@ def get_messages(user, chat_id, tags_source):
     pass
 
 
-@app.route("/tags/", methods=["PUT"])
+@app.route("/tags", methods=["PUT"])
 @to_json
 @accept(
     param_sdk_token(),
-    param_int('tag_id', forward='tag_id'),
+    param_id('tag_id', forward='tag', entity=Tag),
     param_string('mark', forward='new_mark')
 )
-def edit_tag(user, tag_id, new_mark):
-    tag = Tag.query.filter_by(tag_id=tag_id).first()
-    if tag:
-        tag.mark = new_mark
-        try:
-            db.session.commit()
-        except Exception as e:
-            return renderer.error("Server error", 500, e.message)
-        else:
-            return renderer.status()
-    else:
-        return renderer.error("Client error", 404, "Tag not found")
+def edit_tag(user, tag, new_mark):
+    tag.mark = new_mark
+    db.session.commit()
+    return renderer.status()
 
 
-@app.route("/tags/", methods=["POST"])
+@app.route("/tags", methods=["POST"])
 @to_json
 @accept(
     param_sdk_token(),
     param_string('tag_name', forward='tag_name'),
-    param_int('chat_id', forward='chat_id'),
-    param_string('mark', default='interesting', forward='new_mark')
+    param_int('chat_id'),
+    param_string('mark', default='interesting')
 )
-def add_tag(user, tag_name, chat_id, new_mark):
-    new_tag = Tag(user_id=user.user_id, chat_id=chat_id, name=tag_name, mark=new_mark)
-    try:
-        db.session.add(new_tag)
-        db.session.commit()
-    except Exception as e:
-        return renderer.error("Server error", 500, e.message)
-    else:
-        return renderer.new_tag(new_tag)
+def add_tag(user, tag_name, chat_id, mark):
+    new_tag = Tag(
+        user_id=user.user_id,
+        chat_id=chat_id,
+        name=tag_name,
+        mark=mark,
+    )
+    db.session.add(new_tag)
+    db.session.commit()
+    return renderer.new_tag(new_tag)
 
 
-@app.route("/tags/", methods=["DELETE"])
+@app.route("/tags", methods=["DELETE"])
 @to_json
 @accept(
     param_sdk_token(),

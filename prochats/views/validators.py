@@ -39,8 +39,6 @@ def get_param(name, params=None, methods=None):
         source = sources.get(method, {})
         if method == 'json':
             name_parts = name.split('.')
-            print name_parts
-            print source
             for name_part in name_parts:
                 try:
                     source = source.get(name_part, None)
@@ -48,6 +46,7 @@ def get_param(name, params=None, methods=None):
                     return None
             return source
         else:
+            print source
             if source.get(name) is not None:
                 return source.get(name)
 
