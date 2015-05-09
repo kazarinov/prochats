@@ -99,10 +99,7 @@ def get_tags_(token, chat_id):
 
     sorted_dict = sorted(tags, cmp=compare, reverse=True)
 
-    for tag in sorted_dict:
-        print tag, tags[tag]
-
-    return tags
+    return sorted_dict[:20]
 
 @app.route("/messages", methods=["GET"])
 @to_json
