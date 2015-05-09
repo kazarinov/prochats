@@ -106,11 +106,23 @@ class Config(object):
     }
 
 
+class LocalConfig(Config):
+
+    DEBUG = True
+
+    DB_NAME = "prochats"
+    DB_USER = "dev"
+    DB_PASSWORD = "devdev"
+    DB_HOST = "localhost"
+
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///../prochats.db'
+
+
 class RemoteConfig(Config):
 
-    DB_NAME = "rengine"
-    DB_USER = "rengine"
-    DB_PASSWORD = "renginepass"
+    DB_NAME = "prochats"
+    DB_USER = "root"
+    DB_PASSWORD = ""
     DB_HOST = "localhost"
 
     SQLALCHEMY_DATABASE_URI = 'mysql://' + DB_USER + ':' + DB_PASSWORD + '@' + DB_HOST + '/' + DB_NAME + '?charset=utf8'
