@@ -4,7 +4,6 @@ import random
 import sys
 import datetime
 import re
-import string
 
 import vk
 
@@ -109,10 +108,11 @@ def get_tags(user, chat_id, timestamp):
     tags = {}
 
     for message in messages:
-        body = re.sub('[.,:!]$', '', message['body'].lstrip(string.punctuation))
-        for word in body.split():
+        for word in message.split():
+            # remove punctuation
+            n_word = re.sub('$[,.:!?]', '', re.sub('[,.:!$?]', '', word))
             if len(word) > 3:
-                tag_messages = tags.setdefault(normalize_word(word), [])
+                tag_messages = tags.setdefault(normalize_word(n_word), [])
                 tag_messages.append(message.get('message_id'))
 
     def compare(a, b):
