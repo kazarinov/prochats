@@ -84,6 +84,16 @@ class Renderer(object):
         }
 
     @staticmethod
+    def register_info(hash):
+        return {
+            'token': hash,
+            'status': {
+                'code': "0"
+            },
+            'message': 'Success!'
+        }
+
+    @staticmethod
     def new_tag(tag):
         return {
             'tag_id': tag.tag_id,

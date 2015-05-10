@@ -31,10 +31,15 @@ renderer = get_renderer()
 )
 def register(vk_id):
     # Генерируем токен уникального приложения
-    sdk_token = hashlib.sha256(str(random.randint(0, sys.maxint)))
-    new_user = User(vk_token=vk_id, sdk_token=sdk_token)
-    db.session.add(new_user)
-    db.session.commit()
+    sdk_token = str(hashlib.sha256(str(random.randint(0, sys.maxint))))
+    try:
+        new_user = User(vk_token=vk_id, sdk_token=sdk_token)
+        db.session.add(new_user)
+        db.session.commit()
+    except Exception as e:
+        return renderer.error("Server error", 500, e.message)
+    else:
+        return renderer.register_info(sdk_token)
 
 
 def get_vk_messages(vk_token, chat_id, timestamp=None):
