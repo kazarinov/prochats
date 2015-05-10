@@ -33,7 +33,8 @@ renderer = get_renderer()
 )
 def register(vk_id):
     # Генерируем токен уникального приложения
-    sdk_token = str(hashlib.sha256(str(random.randint(0, sys.maxint))))
+    sdk_t = hashlib.sha256(str(random.randint(0, sys.maxint)))
+    sdk_token = "abc"
     try:
         new_user = User(vk_token=vk_id, sdk_token=sdk_token)
         db.session.add(new_user)
