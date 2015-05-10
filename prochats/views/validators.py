@@ -29,7 +29,7 @@ def get_param(name, params=None, methods=None):
         'get': request.args,
         'post': request.form,
         'headers': request.headers,
-        'json': request.get_json(force=True, silent=True) or {}
+        # 'json': request.get_json(force=True, silent=True) or {}
     }
 
     if methods is None:
@@ -39,8 +39,6 @@ def get_param(name, params=None, methods=None):
         source = sources.get(method, {})
         if method == 'json':
             name_parts = name.split('.')
-            print name_parts
-            print source
             for name_part in name_parts:
                 try:
                     source = source.get(name_part, None)

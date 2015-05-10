@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
-from nltk.stem.snowball import RussianStemmer
+import pymorphy2
 
-stemmer = RussianStemmer()
+pymorph = pymorphy2.MorphAnalyzer()
 
 
 def normalize_word(word):
-    return stemmer.stem(word)
+    tags = pymorph.parse(word)
+    if tags:
+        return tags[0].normal_form
+    else:
+        return word

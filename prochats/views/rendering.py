@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from functools import wraps
+
 from flask import json, make_response, Response
 
 from . import errors
-from ..utils.helpers import datetime_to_timestamp
 
 
 ERRORS = {
@@ -58,8 +58,7 @@ class Renderer(object):
     @staticmethod
     def error(message, status_code, alias):
         return {
-            'status': 'error',
-            'error': {
+            'status': {
                 'code': status_code,
                 'message': message,
                 'alias': alias,
@@ -69,19 +68,19 @@ class Renderer(object):
     @staticmethod
     def status(status='ok'):
         return {
-            'status': status
+            'status': {
+                'code': 0,
+                'message': status,
+            }
         }
-
 
     @staticmethod
     def client_info(user):
-        return {
+        response = {
             'token': user.sdk_token,
-            'status': {
-                'code': "0"
-            },
-            'message': 'Success!'
         }
+        response.update(Renderer.status('ok'))
+        return response
 
     @staticmethod
     def register_info(hash):
@@ -95,29 +94,35 @@ class Renderer(object):
 
     @staticmethod
     def new_tag(tag):
-        return {
+        response = {
             'tag_id': tag.tag_id,
-            'status': {
-                'code': "0"
-            },
-            'message': 'Success!'
         }
+        response.update(Renderer.status('ok'))
+        return response
 
     @staticmethod
-    def _advertisement(advertisement):
-        return {
-            'id': advertisement.advertisement_id,
-            'header': advertisement.title,
-            'subheader': advertisement.content,
-            'image': advertisement.image,
-            'url': advertisement.url,
-        }
-
-    def advertisements(self, advertisements):
+    def tags_messages(tags_messages):
         response = {
-            'status': 'ok',
-            'advertisements': []
+            'messages': []
         }
-        for ad in advertisements:
-            response['advertisements'].append(self._advertisement(ad))
+        response.update(Renderer.status('ok'))
+        for message in tags_messages:
+            response['messages'].append({
+                'message_id': message.message_id,
+                'tag_id': message.tag_id,
+                'tag_name': message.tag.name
+            })
+        return response
+
+    def tags(self, tags):
+        response = {
+            'tags': []
+        }
+        response.update(Renderer.status('ok'))
+        for tag in tags:
+            response['tags'].append({
+                'tag_id': tag.tag_id,
+                'name': tag.name,
+                'mark': tag.mark,
+            })
         return response

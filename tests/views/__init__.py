@@ -3,7 +3,7 @@ import json
 import urllib
 import pytest
 
-from rengine import app as test_app
+from prochats import app as test_app
 
 
 class HTTPTest(object):
@@ -19,6 +19,7 @@ class HTTPTest(object):
             data = json.dumps(data)
 
         if method == 'GET':
+            print full_url
             response = self.app.get(full_url, headers=headers)
         elif method == 'PUT':
             response = self.app.put(full_url, headers=headers, data=data)
