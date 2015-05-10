@@ -6,9 +6,11 @@ import datetime
 import re
 
 import vk
+from vk import VkAPIMethodError
 
 from .. import db, app
 from ..utils.nlp import normalize_word
+from ..utils.helpers import retriable_n
 from ..models.users import User
 from ..models.tags import Tag
 from ..models.messages import TagsMessages
@@ -53,7 +55,8 @@ def get_vk_messages(vk_token, chat_id, timestamp=None):
     finish = False
 
     while True:
-        history = vk_api.messages.getHistory(chat_id=chat_id, start_message_id=start_message_id, count=chunk)
+        history = (retriable_n(retry_count=3, time_sleep=1, exceptions=(VkAPIMethodError, ))(vk_api.messages.getHistory)(chat_id=chat_id, start_message_id=start_message_id, count=chunk))
+
         for item in history.get('items'):
             print item.get('date'), timestamp
             if (timestamp is not None and item.get('date') < timestamp) \

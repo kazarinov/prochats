@@ -227,7 +227,7 @@ def propagate(*args):
 
 def param_sdk_token(name='Authentication', forward='user', methods=None):
     if not methods:
-        methods = ['headers']
+        methods = ['headers', 'get']
 
     def validator(params):
         token = get_param(name, params, methods)
