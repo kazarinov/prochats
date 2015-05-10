@@ -48,13 +48,16 @@ def get_vk_messages(vk_token, chat_id, timestamp=None):
 
     chunk = 200
     result_messages = []
+    start_message_id = -1
+    finish = False
 
     while True:
-        history = vk_api.messages.getHistory(chat_id=chat_id, count=chunk)
-
+        history = vk_api.messages.getHistory(chat_id=chat_id, start_message_id=start_message_id, count=chunk)
         for item in history.get('items'):
+            print item.get('date'), timestamp
             if (timestamp is not None and item.get('date') < timestamp) \
                     or item.get('read_state') == 1 and timestamp is None:
+                finish = True
                 break
 
             result_messages.append({
@@ -64,8 +67,10 @@ def get_vk_messages(vk_token, chat_id, timestamp=None):
                 'read_state': item.get('read_state'),
             })
 
-        if history.get('count') < chunk:
+        if finish or history.get('count') < chunk:
             break
+        else:
+            start_message_id = history.get('items')[-1]['id']
 
     return result_messages
 
@@ -108,7 +113,7 @@ def get_tags(user, chat_id, timestamp):
     tags = {}
 
     for message in messages:
-        for word in message.split():
+        for word in message['body'].split():
             # remove punctuation
             n_word = re.sub('$[,.:!?]', '', re.sub('[,.:!$?]', '', word))
             normal_word = normalize_word(n_word)
