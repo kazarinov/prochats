@@ -111,7 +111,8 @@ def get_tags(user, chat_id, timestamp):
         for word in message.split():
             # remove punctuation
             n_word = re.sub('$[,.:!?]', '', re.sub('[,.:!$?]', '', word))
-            if len(word) > 3:
+            normal_word = normalize_word(n_word)
+            if normal_word:
                 tag_messages = tags.setdefault(normalize_word(n_word), [])
                 tag_messages.append(message.get('message_id'))
 

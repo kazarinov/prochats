@@ -4,5 +4,7 @@ requests
 flask-restful
 MySQL-python
 vk==1.5
+
 pymorphy2[fast]
 pymorphy2-dicts-ru
+stop-words
