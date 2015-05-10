@@ -46,6 +46,11 @@ def register(vk_id):
         return renderer.register_info(sdk_token)
 
 
+@retriable_n(retry_count=3, time_sleep=1, exceptions=(VkAPIMethodError, ))
+def get_vk_history(vk_api, chat_id, start_message_id, count):
+    return vk_api.messages.getHistory(chat_id=chat_id, start_message_id=start_message_id, count=count)
+
+
 def get_vk_messages(vk_token, chat_id, timestamp=None):
     vk_api = vk.API(access_token=vk_token, timeout=5)
 
@@ -55,7 +60,7 @@ def get_vk_messages(vk_token, chat_id, timestamp=None):
     finish = False
 
     while True:
-        history = (retriable_n(retry_count=3, time_sleep=1, exceptions=(VkAPIMethodError, ))(vk_api.messages.getHistory)(chat_id=chat_id, start_message_id=start_message_id, count=chunk))
+        history = get_vk_history(vk_api, chat_id=chat_id, start_message_id=start_message_id, count=chunk)
 
         for item in history.get('items'):
             print item.get('date'), timestamp
