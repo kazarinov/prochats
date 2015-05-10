@@ -7,10 +7,12 @@ import re
 import string
 
 import vk
+
 from .. import db, app
 from ..utils.nlp import normalize_word
 from ..models.users import User
 from ..models.tags import Tag
+from ..models.messages import TagsMessages
 from .rendering import to_json, get_renderer
 from .validators import (
     accept,
@@ -137,11 +139,12 @@ def get_tags(user, chat_id, timestamp):
 @accept(
     param_sdk_token(),
     param_int('chat_id', forward='chat_id'),
-    param_string('tag_ids', forward='tags_source')
+    param_string('tag_ids', forward='tags_ids')
 )
-def get_messages(user, chat_id, tags_source):
+def get_messages(user, chat_id, tags_ids):
     # Вернуть сообщения по тегам
-    pass
+    tags_messages = TagsMessages.query.filter(TagsMessages.tag_id.in_(tags_ids.split()))
+    return renderer.tags_messages(tags_messages)
 
 
 @app.route("/tags", methods=["PUT"])

@@ -77,7 +77,7 @@ response:
         {
             "message_id": "<message_id>",
             "tag_id": "<tag_id>",
-            "name": "<tag_name>"
+            "tag_name": "<tag_name>"
         },  
         ...
     ],

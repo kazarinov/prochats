@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from functools import wraps
+
 from flask import json, make_response, Response
 
 from . import errors
-from ..utils.helpers import datetime_to_timestamp
 
 
 ERRORS = {
@@ -88,6 +88,20 @@ class Renderer(object):
             'tag_id': tag.tag_id,
         }
         response.update(Renderer.status('ok'))
+        return response
+
+    @staticmethod
+    def tags_messages(tags_messages):
+        response = {
+            'messages': []
+        }
+        response.update(Renderer.status('ok'))
+        for message in tags_messages:
+            response['messages'].append({
+                'message_id': message.message_id,
+                'tag_id': message.tag_id,
+                'tag_name': message.tag.name
+            })
         return response
 
     def tags(self, tags):
