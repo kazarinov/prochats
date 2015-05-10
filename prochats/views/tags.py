@@ -119,7 +119,7 @@ def get_tags(user, chat_id, timestamp):
             return 0
 
     sorted_dict = sorted(tags, cmp=compare, reverse=True)
-    tags = []
+    tags_objects = []
     for key in sorted_dict[:limit]:
         tag = Tag(
             user_id=user.user_id,
@@ -128,10 +128,17 @@ def get_tags(user, chat_id, timestamp):
             mark='unknown',
             create_date=datetime.datetime.now(),
         )
-        tags.append(tag)
         db.session.add(tag)
-    db.session.commit()
-    return renderer.tags(tags)
+        db.session.commit()
+        tags_objects.append(tag)
+
+        for message_id in tags[key]:
+            db.session.add(
+                TagsMessages(tag_id=tag.tag_id, message_id=message_id)
+            )
+        db.session.commit()
+
+    return renderer.tags(tags_objects)
 
 
 @app.route("/messages", methods=["GET"])

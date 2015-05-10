@@ -47,5 +47,5 @@ class TestGetTags(TestUser):
             'timestamp': 0,
         }
         status, response = self.assertOk('/tags', params=params, headers={'Authentication': user.sdk_token})
-        assert response.get('status') == 'ok'
+        assert response.get('status', {}).get('message') == 'ok'
         assert len(response.get('tags')) > 0

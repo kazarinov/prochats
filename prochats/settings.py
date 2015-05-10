@@ -123,7 +123,7 @@ class RemoteConfig(Config):
     DB_NAME = "prochats"
     DB_USER = "dev"
     DB_PASSWORD = "devdev"
-    DB_HOST = "178.62.156.72"
+    DB_HOST = "localhost"
 
     SQLALCHEMY_DATABASE_URI = 'mysql://' + DB_USER + ':' + DB_PASSWORD + '@' + DB_HOST + '/' + DB_NAME + '?charset=utf8'
 
@@ -135,4 +135,4 @@ class DevRemoteConfig(RemoteConfig):
         super(DevRemoteConfig, self).__init__()
 
 
-config = LocalConfig()
+config = DevRemoteConfig()
